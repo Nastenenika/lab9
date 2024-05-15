@@ -1,32 +1,75 @@
+import streamlit as st
+st.image('c.jpg')
+import matplotlib.pyplot as plt
 filename = "data.csv"
+def show_web(sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f):
+
+    st.header('Данные пассажиров Титаника')
+    st.write('Выбираем пол для выживших и погибших пассажиров.')
+    option = st.selectbox('Значение поля Sex:', ['Мужской', 'Женский'])
+    if option == 'Мужской':
+        data = {'тип': ['Родственников у выживших', 'Родственников у погибших'], 'данные': [sum_liave_m, sum_dead_m]}
+    elif option == 'Женский':
+        data = {'тип': ['Родственников у выживших', 'Родственников у погибших'], 'данные': [sum_liave_f, sum_dead_f]}
+
+    st.table(data)
+
+    fig = plt.figure(figsize=(10, 5))
+    plt.bar(data['тип'], data['данные'])
+    xlab = "Пол {}".format(option)
+    plt.xlabel(xlab)
+    plt.ylabel("Колличество родственников")
+    plt.title("Колличество родственников у выживших и погибших пассажиров")
+    st.pyplot(fig)
 def get_data(fn):
     with open (fn) as file:
         lines = file.readlines()
-    return lines
+
+    return lines[1:]
+def work(lines):
+    sum_liave_m = 0
+    sum_liave_f = 0
+    sum_dead_m = 0
+    sum_dead_f = 0
+    for line  in lines :
+        #Пропускаем первую строку
+          #Разбиваю на столбцы
+        tmpR = line.strip().rsplit(",",8)
+        tmp = line.strip().split(",",3)
+
+        #Считаем выживших и погибших
+        who = 0
+        if tmp[1].isdigit():
+            who = int(tmp[1])
+
+        # количество братьеев, сестер в т.ч. сводных
+        SibSp = 0
+        if tmpR[3].isdigit():
+            SibSp = int(tmpR[3])
+
+        # количество родителей и детей
+        Parch = 0
+        if tmpR[4].isdigit():
+            Parch = int(tmpR[4])
+
+        sex = tmpR[1]
+
+    #Суммируем родственников выживших и погибших
+        if who == 0:
+            if sex == 'male':
+                sum_dead_m = sum_dead_m + SibSp + Parch
+            else:
+                sum_dead_f = sum_dead_f + SibSp + Parch
+        if who == 1:
+            if sex == 'male':
+                sum_liave_m = sum_liave_m + SibSp + Parch
+            else:
+                sum_liave_f = sum_liave_f + SibSp + Parch
+
+    return sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f
+
 lines = get_data(filename)
-sum_liave = 0
-sum_dead = 0
-i = 0
-for line  in lines:
-    if i < 1:
-        i += 1
-        continue
-    tmpR = line.strip().rsplit(",",8)
-    tmp = line.strip().split(",",3)
-#подсчет выживших и погибших
-    who = 0
-    if tmp[1].isdigit():
-        who = int(tmp[1])
-    SibSp = 0
-    if tmpR[3].isdigit():
-        SibSp = int(tmpR[3])
-    Parch = 0
-    if tmpR[4].isdigit():
-        Parch = int(tmpR[4])
-#Сумма выживших и погибших родственников
-    if who == 0:
-        sum_dead = sum_dead + SibSp + Parch
-    if who == 1:
-        sum_liave = sum_liave + SibSp + Parch
-print("Родственников у погибших: {}".format(sum_dead))
-print("Родственников у выживших: {}".format(sum_liave))
+
+sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f = work(lines)
+
+show_web(sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f)
