@@ -2,6 +2,7 @@ import streamlit as st
 st.image('c.jpg')
 import matplotlib.pyplot as plt
 filename = "data.csv"
+
 def show_web(sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f):
 
     st.header('Данные пассажиров Титаника')
@@ -38,18 +39,18 @@ def work(lines):
         tmp = line.strip().split(",",3)
 
         #Считаем выживших и погибших
-        who = -1
-        if str(tmp[1]).strip().isdigit():
+        who = 0
+        if tmp[1].isdigit():
             who = int(tmp[1])
 
         # количество братьеев, сестер в т.ч. сводных
         SibSp = 0
-        if str(tmpR[3]).strip().isdigit():
+        if tmpR[3].isdigit():
             SibSp = int(tmpR[3])
 
         # количество родителей и детей
         Parch = 0
-        if str(tmpR[4]).strip().isdigit():
+        if tmpR[4].isdigit():
             Parch = int(tmpR[4])
 
         sex = tmpR[1]
@@ -58,20 +59,16 @@ def work(lines):
         if who == 0:
             if sex == 'male':
                 sum_dead_m = sum_dead_m + SibSp + Parch
-            elif sex == 'female':
+            else:
                 sum_dead_f = sum_dead_f + SibSp + Parch
         if who == 1:
             if sex == 'male':
                 sum_liave_m = sum_liave_m + SibSp + Parch
-            elif sex == 'female':
-                sum_liave_f = sum_liave_f + SibSp + Parch
-        if who == 1:
-            if sex == 'male':
-                sum_liave_m = sum_liave_m + SibSp + Parch
-            elif sex == 'female':
+            else:
                 sum_liave_f = sum_liave_f + SibSp + Parch
 
-    return (sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f)
+
+    return sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f
 
 lines = get_data(filename)
 
