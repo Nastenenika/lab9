@@ -1,10 +1,12 @@
 import streamlit as st
+
 st.image('c.jpg')
 import matplotlib.pyplot as plt
+
 filename = "data.csv"
 
-def show_web(sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f):
 
+def show_web(sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f):
     st.header('Данные пассажиров Титаника')
     st.write('Выбираем пол для выживших и погибших пассажиров.')
     option = st.selectbox('Значение поля Sex:', ['Мужской', 'Женский'])
@@ -22,21 +24,25 @@ def show_web(sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f):
     plt.ylabel("Колличество родственников")
     plt.title("Колличество родственников у выживших и погибших пассажиров")
     st.pyplot(fig)
+
+
 def get_data(fn):
-    with open (fn) as file:
+    with open(fn) as file:
         lines = file.readlines()
 
     return lines[1:]
+
+
 def work(lines):
     sum_liave_m = 0
     sum_liave_f = 0
     sum_dead_m = 0
     sum_dead_f = 0
-    for line  in lines :
+    for line in lines:
         #Пропускаем первую строку
-          #Разбиваю на столбцы
-        tmpR = line.strip().rsplit(",",8)
-        tmp = line.strip().split(",",3)
+        #Разбиваю на столбцы
+        tmpR = line.strip().rsplit(",", 8)
+        tmp = line.strip().split(",", 3)
 
         #Считаем выживших и погибших
         who = 0
@@ -55,7 +61,7 @@ def work(lines):
 
         sex = tmpR[1]
 
-    #Суммируем родственников выживших и погибших
+        #Суммируем родственников выживших и погибших
         if who == 0:
             if sex == 'male':
                 sum_dead_m = sum_dead_m + SibSp + Parch
@@ -67,8 +73,8 @@ def work(lines):
             else:
                 sum_liave_f = sum_liave_f + SibSp + Parch
 
-
     return sum_liave_m, sum_liave_f, sum_dead_m, sum_dead_f
+
 
 lines = get_data(filename)
 
